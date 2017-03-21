@@ -8,13 +8,48 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "0.9.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    signingConfigs {
+        debug {}
+        release {
+            def signingFile = file('../signing.properties')
+            if(signingFile.canRead()){
+                def Properties props = new Properties()
+                props.load(new FileInputStream(signingFile))
+
+                try {
+                    storeFile = file( props['STORE_FILE'] )
+                    storePassword = props['STORE_PASSWORD']
+                    keyAlias = props['KEY_ALIAS']
+                    keyPassword = props['KEY_PASSWORD']
+
+                    println "RELEASE_BUILD: Signing..."
+                }catch (e){
+                    throw new InvalidUserDataException("You should define STORE_FILE and STORE_PASSWORD and KEY_ALIAS and KEY_PASSWORD in signing.properties.")
+                }
+            }else{
+                println "RELEASE_BUILD: signing.properties not found"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {}
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }

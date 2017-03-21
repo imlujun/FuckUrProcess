@@ -32,8 +32,6 @@ import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
 
-import static android.R.attr.process;
-
 public class FuckUrProcessListActivity extends AppCompatActivity {
 
     private List<ProcessManager.Process> mRunningProcessList;
@@ -429,7 +427,7 @@ public class FuckUrProcessListActivity extends AppCompatActivity {
         public ProcessInfoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_process_info,
                     parent, false);
-            return new ProcessInfoViewHolder(v, mItemClickListener);
+            return new ProcessInfoViewHolder(v);
         }
 
         @Override
@@ -442,7 +440,9 @@ public class FuckUrProcessListActivity extends AppCompatActivity {
                     "\nstate: " + pInfo.state +
                     "\npid: " + pInfo.pid +
                     "\nuid: " + pInfo.uid +
-                    "\nmemory rss/vSize: " + pInfo.rss + "/" + pInfo.vsize + " KB");
+                    "\nmemory rss/vSize: " + pInfo.rss + "/" + pInfo.vsize + " KB" +
+                    "\ntime u/s: " + pInfo.userTime + "/" + pInfo.systemTime + " ms" +
+                    "\npriority/niceness: " + pInfo.priority + "/" + pInfo.niceness);
 
             holder.llProcessContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -457,17 +457,12 @@ public class FuckUrProcessListActivity extends AppCompatActivity {
         class ProcessInfoViewHolder extends RecyclerView.ViewHolder{
 
             private TextView tvProcessInfo;
-
             private LinearLayout llProcessContainer;
 
-            private AdapterView.OnItemClickListener mItemClickListener;
-
-            public ProcessInfoViewHolder(View v, AdapterView.OnItemClickListener listener){
+            public ProcessInfoViewHolder(View v){
                 super(v);
                 tvProcessInfo = (TextView) v.findViewById(R.id.tv_process_info);
                 llProcessContainer = (LinearLayout) v.findViewById(R.id.ll_process_container);
-
-                mItemClickListener = listener;
             }
         }
     }
